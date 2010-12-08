@@ -2,7 +2,7 @@
 
 Name:		tkimg
 Version:	1.4
-Release:	%mkrel 0.%{svnversion}.1
+Release:	%mkrel 0.%{svnversion}.2
 Summary:	More Image Formats for Tk
 Group:		System/Libraries
 License:	BSD
