@@ -1,0 +1,41 @@
+diff -ur tkimg-20081115/libtiff/tcl/Makefile.in tkimg-20081115.tiff/libtiff/tcl/Makefile.in
+--- tkimg-20081115/libtiff/tcl/Makefile.in	2008-10-23 18:09:37.000000000 +0200
++++ tkimg-20081115.tiff/libtiff/tcl/Makefile.in	2008-11-16 10:49:49.000000000 +0100
+@@ -35,8 +35,8 @@
+ 
+ # tif_fax3sm is special. It is generated.
+ 
+-PKG_SOURCES	= @PKG_SOURCES@ tif_fax3sm.c
+-PKG_OBJECTS	= @PKG_OBJECTS@ tif_fax3sm.$(OBJEXT)
++PKG_SOURCES	= tifftcl.c tifftclStubInit.c 
++PKG_OBJECTS	= tifftcl.o tifftclStubInit.o 
+ 
+ PKG_STUB_SOURCES = @PKG_STUB_SOURCES@
+ PKG_STUB_OBJECTS = @PKG_STUB_OBJECTS@
+@@ -108,7 +108,7 @@
+ RANLIB_STUB	= @RANLIB_STUB@
+ SHLIB_CFLAGS	= @SHLIB_CFLAGS@
+ SHLIB_LD	= @SHLIB_LD@
+-SHLIB_LD_LIBS	= @SHLIB_LD_LIBS@
++SHLIB_LD_LIBS	= @SHLIB_LD_LIBS@ -ltiff
+ STLIB_LD	= @STLIB_LD@
+ TCL_DEFS	= @TCL_DEFS@
+ TCL_BIN_DIR	= @TCL_BIN_DIR@
+diff -ur tkimg-20081115/libtiff/tcl/tifftclDecls.h tkimg-20081115.tiff/libtiff/tcl/tifftclDecls.h
+--- tkimg-20081115/libtiff/tcl/tifftclDecls.h	2008-10-22 12:55:37.000000000 +0200
++++ tkimg-20081115.tiff/libtiff/tcl/tifftclDecls.h	2008-11-16 10:53:05.000000000 +0100
+@@ -24,9 +24,11 @@
+ #undef INLINE
+ 
+ #include <tifftclDeclsMask.h>
+-#include <../libtiff/tiffio.h>
+-#include <../libtiff/tiffiop.h>
+-#include <../libtiff/tif_predict.h>
++#include "../libtiff/tiffiop.h"
++#include </usr/include/tiff.h>
++#include </usr/include/tiffio.h>
++#include "../libtiff/tiffiop.h"
++#include "../libtiff/tif_predict.h"
+ #include <tifftclDeclsUnmask.h>
+ 
+ /* !BEGIN!: Do not edit below this line. */

@@ -1,0 +1,83 @@
+diff -ur tkimg-20081115/libpng/tcl/Makefile.in tkimg-20081115.png/libpng/tcl/Makefile.in
+--- tkimg-20081115/libpng/tcl/Makefile.in	2008-10-23 18:09:37.000000000 +0200
++++ tkimg-20081115.png/libpng/tcl/Makefile.in	2008-11-15 18:36:12.000000000 +0100
+@@ -37,8 +37,8 @@
+ # $(srcdir) or in the generic, win or unix subdirectory.
+ #========================================================================
+ 
+-PKG_SOURCES	= @PKG_SOURCES@
+-PKG_OBJECTS	= @PKG_OBJECTS@
++PKG_SOURCES	= pngtcl.c pngtclStubInit.c
++PKG_OBJECTS	= pngtcl.o pngtclStubInit.o
+ 
+ PKG_STUB_SOURCES = @PKG_STUB_SOURCES@
+ PKG_STUB_OBJECTS = @PKG_STUB_OBJECTS@
+@@ -110,7 +110,7 @@
+ RANLIB_STUB	= @RANLIB_STUB@
+ SHLIB_CFLAGS	= @SHLIB_CFLAGS@
+ SHLIB_LD	= @SHLIB_LD@
+-SHLIB_LD_LIBS	= @SHLIB_LD_LIBS@
++SHLIB_LD_LIBS	= @SHLIB_LD_LIBS@ -lpng12
+ STLIB_LD	= @STLIB_LD@
+ TCL_DEFS	= @TCL_DEFS@
+ TCL_BIN_DIR	= @TCL_BIN_DIR@
+diff -ur tkimg-20081115/libpng/tcl/pngtclDecls.h tkimg-20081115.png/libpng/tcl/pngtclDecls.h
+--- tkimg-20081115/libpng/tcl/pngtclDecls.h	2008-10-22 12:55:37.000000000 +0200
++++ tkimg-20081115.png/libpng/tcl/pngtclDecls.h	2008-11-15 18:34:48.000000000 +0100
+@@ -16,7 +16,7 @@
+ 
+ #include <tcl.h>
+ #include <pngtclDeclsMask.h>
+-#include <../png.h>
++#include </usr/include/libpng12/png.h>
+ #include <pngtclDeclsUnmask.h>
+ 
+ /* !BEGIN!: Do not edit below this line. */
+@@ -221,15 +221,15 @@
+ 				png_infopp info_ptr_ptr,
+ 				png_infopp end_info_ptr_ptr));
+ /* 62 */
+-EXTERN void		png_read_destroy _ANSI_ARGS_((png_structp png_ptr,
+-				png_infop info_ptr, png_infop end_info_ptr));
++/*EXTERN void		png_read_destroy _ANSI_ARGS_((png_structp png_ptr,
++				png_infop info_ptr, png_infop end_info_ptr));*/
+ /* 63 */
+ EXTERN void		png_destroy_write_struct _ANSI_ARGS_((
+ 				png_structpp png_ptr_ptr,
+ 				png_infopp info_ptr_ptr));
+ /* Slot 64 is reserved */
+ /* 65 */
+-EXTERN void		png_write_destroy _ANSI_ARGS_((png_structp png_ptr));
++/*EXTERN void		png_write_destroy _ANSI_ARGS_((png_structp png_ptr));*/
+ /* 66 */
+ EXTERN void		png_set_crc_action _ANSI_ARGS_((png_structp png_ptr,
+ 				int crit_action, int ancil_action));
+@@ -1171,10 +1171,10 @@
+     void (*png_read_end) _ANSI_ARGS_((png_structp png_ptr, png_infop info_ptr)); /* 59 */
+     void (*png_destroy_info_struct) _ANSI_ARGS_((png_structp png_ptr, png_infopp info_ptr_ptr)); /* 60 */
+     void (*png_destroy_read_struct) _ANSI_ARGS_((png_structpp png_ptr_ptr, png_infopp info_ptr_ptr, png_infopp end_info_ptr_ptr)); /* 61 */
+-    void (*png_read_destroy) _ANSI_ARGS_((png_structp png_ptr, png_infop info_ptr, png_infop end_info_ptr)); /* 62 */
++/*    void (*png_read_destroy) _ANSI_ARGS_((png_structp png_ptr, png_infop info_ptr, png_infop end_info_ptr)); */ /* 62 */
+     void (*png_destroy_write_struct) _ANSI_ARGS_((png_structpp png_ptr_ptr, png_infopp info_ptr_ptr)); /* 63 */
+     void *reserved64;
+-    void (*png_write_destroy) _ANSI_ARGS_((png_structp png_ptr)); /* 65 */
++/*    void (*png_write_destroy) _ANSI_ARGS_((png_structp png_ptr)); */ /* 65 */
+     void (*png_set_crc_action) _ANSI_ARGS_((png_structp png_ptr, int crit_action, int ancil_action)); /* 66 */
+     void (*png_set_filter) _ANSI_ARGS_((png_structp png_ptr, int method, int filters)); /* 67 */
+     void (*png_set_filter_heuristics) _ANSI_ARGS_((png_structp png_ptr, int heuristic_method, int num_weights, png_doublep filter_weights, png_doublep filter_costs)); /* 68 */
+diff -ur tkimg-20081115/libpng/tcl/pngtclStubInit.c tkimg-20081115.png/libpng/tcl/pngtclStubInit.c
+--- tkimg-20081115/libpng/tcl/pngtclStubInit.c	2008-10-22 14:06:38.000000000 +0200
++++ tkimg-20081115.png/libpng/tcl/pngtclStubInit.c	2008-11-15 18:35:22.000000000 +0100
+@@ -205,10 +205,10 @@
+     png_read_end, /* 59 */
+     png_destroy_info_struct, /* 60 */
+     png_destroy_read_struct, /* 61 */
+-    png_read_destroy, /* 62 */
++/*    png_read_destroy, */ /* 62 */
+     png_destroy_write_struct, /* 63 */
+     NULL, /* 64 */
+-    png_write_destroy, /* 65 */
++/*    png_write_destroy, */ /* 65 */
+     png_set_crc_action, /* 66 */
+     png_set_filter, /* 67 */
+ #if !defined(PNG_WRITE_WEIGHTED_FILTER_SUPPORTED) || !defined(PNG_FLOATING_POINT_SUPPORTED)
