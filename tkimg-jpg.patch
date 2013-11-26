@@ -1,0 +1,90 @@
+diff -ur tkimg1.4/libjpeg/configure tkimg1.4.jpg/libjpeg/configure
+--- tkimg1.4/libjpeg/configure	2010-07-07 10:09:46.000000000 +0200
++++ tkimg1.4.jpg/libjpeg/configure	2010-12-16 15:57:33.642585100 +0100
+@@ -5044,22 +5044,6 @@
+ 
+ 
+     vars="
+-	../compat/libjpeg/jcapimin.c	../compat/libjpeg/jcapistd.c	../compat/libjpeg/jccoefct.c
+-	../compat/libjpeg/jccolor.c	../compat/libjpeg/jcdctmgr.c	../compat/libjpeg/jchuff.c
+-	../compat/libjpeg/jcinit.c	../compat/libjpeg/jcmainct.c	../compat/libjpeg/jcmarker.c
+-	../compat/libjpeg/jcmaster.c	../compat/libjpeg/jcomapi.c	../compat/libjpeg/jcparam.c
+-	../compat/libjpeg/jcarith.c	../compat/libjpeg/jcprepct.c	../compat/libjpeg/jcsample.c
+-	../compat/libjpeg/jctrans.c	../compat/libjpeg/jdapimin.c	../compat/libjpeg/jdapistd.c
+-	../compat/libjpeg/jdatadst.c	../compat/libjpeg/jdatasrc.c	../compat/libjpeg/jdcoefct.c
+-	../compat/libjpeg/jdcolor.c	../compat/libjpeg/jddctmgr.c	../compat/libjpeg/jdhuff.c
+-	../compat/libjpeg/jdinput.c	../compat/libjpeg/jdmainct.c	../compat/libjpeg/jdmarker.c
+-	../compat/libjpeg/jdmaster.c	../compat/libjpeg/jdmerge.c	../compat/libjpeg/jdarith.c
+-	../compat/libjpeg/jdpostct.c	../compat/libjpeg/jdsample.c	../compat/libjpeg/jdtrans.c
+-	../compat/libjpeg/jerror.c	../compat/libjpeg/jfdctflt.c	../compat/libjpeg/jfdctfst.c
+-	../compat/libjpeg/jfdctint.c	../compat/libjpeg/jidctflt.c	../compat/libjpeg/jidctfst.c
+-	../compat/libjpeg/jidctint.c	../compat/libjpeg/jaricom.c	../compat/libjpeg/jquant1.c
+-	../compat/libjpeg/jquant2.c	../compat/libjpeg/jutils.c	../compat/libjpeg/jmemmgr.c
+-	../compat/libjpeg/jmemansi.c
+ "
+     for i in $vars; do
+ 	case $i in
+@@ -5860,7 +5844,7 @@
+     if test $tcl_cv_cc_visibility_hidden = yes; then :
+ 
+ 
+-$as_echo "#define MODULE_SCOPE extern __attribute__((__visibility__(\"hidden\")))" >>confdefs.h
++$as_echo "#define MODULE_SCOPE extern" >>confdefs.h
+ 
+ 
+ fi
+diff -ur tkimg1.4/libjpeg/jpegtclDecls.h tkimg1.4.jpg/libjpeg/jpegtclDecls.h
+--- tkimg1.4/libjpeg/jpegtclDecls.h	2010-07-07 13:08:08.000000000 +0200
++++ tkimg1.4.jpg/libjpeg/jpegtclDecls.h	2010-12-16 15:56:16.672987765 +0100
+@@ -30,8 +30,8 @@
+ 
+ /* undef Tcl macros that conflict with libjpeg stuff (sigh) */
+ #undef EXTERN
+-#include "../compat/libjpeg/jpeglib.h"
+-#include "../compat/libjpeg/jerror.h"
++#include </usr/include/jpeglib.h>
++#include </usr/include/jerror.h>
+ 
+ /* !BEGIN!: Do not edit below this line. */
+ 
+diff -ur tkimg1.4/libjpeg/Makefile.in tkimg1.4.jpg/libjpeg/Makefile.in
+--- tkimg1.4/libjpeg/Makefile.in	2010-07-07 13:08:08.000000000 +0200
++++ tkimg1.4.jpg/libjpeg/Makefile.in	2010-12-16 15:58:34.049990255 +0100
+@@ -107,7 +107,7 @@
+ RANLIB_STUB	= @RANLIB_STUB@
+ SHLIB_CFLAGS	= @SHLIB_CFLAGS@
+ SHLIB_LD	= @SHLIB_LD@
+-SHLIB_LD_LIBS	= @SHLIB_LD_LIBS@
++SHLIB_LD_LIBS	= @SHLIB_LD_LIBS@ -ljpeg
+ STLIB_LD	= @STLIB_LD@
+ TCL_DEFS	= @TCL_DEFS@
+ TCL_BIN_DIR	= @TCL_BIN_DIR@
+diff -up tkimg1.4/libjpeg/configure.in.jpeg tkimg1.4/libjpeg/configure.in
+--- tkimg1.4/libjpeg/configure.in.jpeg	2011-08-01 13:53:03.786771720 -0400
++++ tkimg1.4/libjpeg/configure.in	2011-08-01 13:53:33.188421322 -0400
+@@ -54,25 +54,6 @@ JPEG_CC=$CC
+ 
+ TEA_ADD_SOURCES([jpegtcl.c jpegtclStubInit.c])
+ 
+-TEA_ADD_SOURCES([
+-	../compat/libjpeg/jcapimin.c	../compat/libjpeg/jcapistd.c	../compat/libjpeg/jccoefct.c
+-	../compat/libjpeg/jccolor.c	../compat/libjpeg/jcdctmgr.c	../compat/libjpeg/jchuff.c
+-	../compat/libjpeg/jcinit.c	../compat/libjpeg/jcmainct.c	../compat/libjpeg/jcmarker.c
+-	../compat/libjpeg/jcmaster.c	../compat/libjpeg/jcomapi.c	../compat/libjpeg/jcparam.c
+-	../compat/libjpeg/jcarith.c	../compat/libjpeg/jcprepct.c	../compat/libjpeg/jcsample.c
+-	../compat/libjpeg/jctrans.c	../compat/libjpeg/jdapimin.c	../compat/libjpeg/jdapistd.c
+-	../compat/libjpeg/jdatadst.c	../compat/libjpeg/jdatasrc.c	../compat/libjpeg/jdcoefct.c
+-	../compat/libjpeg/jdcolor.c	../compat/libjpeg/jddctmgr.c	../compat/libjpeg/jdhuff.c
+-	../compat/libjpeg/jdinput.c	../compat/libjpeg/jdmainct.c	../compat/libjpeg/jdmarker.c
+-	../compat/libjpeg/jdmaster.c	../compat/libjpeg/jdmerge.c	../compat/libjpeg/jdarith.c
+-	../compat/libjpeg/jdpostct.c	../compat/libjpeg/jdsample.c	../compat/libjpeg/jdtrans.c
+-	../compat/libjpeg/jerror.c	../compat/libjpeg/jfdctflt.c	../compat/libjpeg/jfdctfst.c
+-	../compat/libjpeg/jfdctint.c	../compat/libjpeg/jidctflt.c	../compat/libjpeg/jidctfst.c
+-	../compat/libjpeg/jidctint.c	../compat/libjpeg/jaricom.c	../compat/libjpeg/jquant1.c
+-	../compat/libjpeg/jquant2.c	../compat/libjpeg/jutils.c	../compat/libjpeg/jmemmgr.c
+-	../compat/libjpeg/jmemansi.c
+-])
+-
+ TEA_ADD_HEADERS([jpegtcl.h jpegtclDecls.h])
+ 
+ TEA_ADD_INCLUDES([-I\"`\${CYGPATH} \${srcdir}`\"])

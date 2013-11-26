@@ -1,30 +1,29 @@
-%define svnversion 20081115
-
+Summary:	Image support library for Tk
 Name:		tkimg
 Version:	1.4
-Release:	%mkrel 0.%{svnversion}.2
-Summary:	More Image Formats for Tk
-Group:		System/Libraries
+Release:	1
 License:	BSD
-URL:		http://sourceforge.net/projects/tkimg
-# The source for this package was pulled from upstream's vcs.  Use the
-# following commands to generate the tarball:
-# svn export -r 173 https://tkimg.svn.sourceforge.net/svnroot/tkimg/trunk tkimg-20081115
-#  tar -czvf tkimg-20081115.tar.gz  tkimg-20081115
-Source0:	%{name}-%{svnversion}.tar.gz
-# A request to allow building with system libraries has been submitted
-# https://sourceforge.net/tracker/index.php?func=detail&aid=2292032&group_id=52039&atid=465495
-Patch0:		tkimg-20081115-syslibs-zlib.patch
-Patch1:		tkimg-20081115-syslibs-png.patch
-Patch2:		tkimg-20081115-syslibs-tiff.patch
-Patch3:		tkimg-20081115-syslibs-jpg.patch
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroo
+Group:		System/Libraries
+Url:		http://sourceforge.net/projects/tkimg
+Source0:	%{name}%{version}.tar.bz2
+Patch0:		tkimg-zlib.patch
+Patch1:		tkimg-jpg.patch
+Patch2:		tkimg-libpng.patch
+Patch3:		tkimg-libtiff.patch
+Patch4:		tkimg-libpng15.patch
+Patch5:		tkimg-libtiff4.patch
+# gzgetc is now defined as a macro in zlib, which causes tkimg to ftbfs
+# because it wants to define all of its functions internally to map to the 
+# tcl/tk bits. The simple fix is to use the abstraction function "gzgetc_"
+# which avoids the problem. See: https://bugzilla.redhat.com/show_bug.cgi?id=844462
+Patch6:		tkimg-zlib127-gzgetc_fix.patch
+BuildRequires:	tcl-tcllib
+BuildRequires:	jpeg-devel
 BuildRequires:	tcl-devel
-BuildRequires:	tk-devel
-BuildRequires:	libtiff-devel
-BuildRequires:	libpng-devel
-BuildRequires:	libjpeg-devel
-BuildRequires:	zlib-devel
+BuildRequires:	pkgconfig(libpng)
+BuildRequires:	pkgconfig(libtiff-4)
+BuildRequires:	pkgconfig(tk)
+BuildRequires:	pkgconfig(zlib)
 Requires:	tcl
 
 %description
@@ -33,33 +32,60 @@ photo image type, and a new image type, pixmaps.
 The provided format handlers include bmp, gif, ico, jpeg, pcx, png,
 ppm, ps, sgi, sun, tga, tiff, xbm, and xpm.
 
+%files
+%doc README
+%{_libdir}/*.so
+%{tcl_sitearch}/Img1.4
+%exclude %{tcl_sitearch}/Img1.4/*.a
+%{_mandir}/mann/*.n*
+
+#----------------------------------------------------------------------------
+
 %package devel
-Summary:	Libraries, includes, etc. used to develop an application with %{name}
-Group:		System/Libraries
-Requires:	%{name} = %{version}-%{release}
+Summary:	Development files for %{name}
+Group:		Development/Other
+Requires:	%{name} = %{EVRD}
+Requires:	jpeg-devel
 Requires:	tcl-devel
-Requires:	tk-devel
-Requires:	libtiff-devel
-Requires:	libpng-devel
-Requires:	libjpeg-devel
-Requires:	zlib-devel
+Requires:	pkgconfig(libpng)
+Requires:	pkgconfig(libtiff-4)
+Requires:	pkgconfig(tk)
+Requires:	pkgconfig(zlib)
 
 %description devel
-This are the header files needed to develop a %{name} application.
+These are the header files needed to develop a %{name} application.
+
+%files devel
+%doc README
+%{_includedir}/*
+%{_libdir}/*.sh
+%{tcl_sitearch}/Img1.4/*.a
+
+#----------------------------------------------------------------------------
 
 %prep
-%setup -q -n %{name}-%{svnversion}
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
+%setup -q -n %{name}%{version}
+%patch0 -p1 -b .zlib
+rm -rf compat/zlib
+%patch1 -p1 -b .jpeg
+rm -rf compat/libjpeg
+%patch2 -p1 -b .libpng
+rm -rf compat/libpng
+%patch3 -p1 -b .libtiff
+rm -rf compat/libtiff
+%patch4 -p1 -b .png15
+%patch5 -p1 -b .tiff4
+%patch6 -p1 -b .gzgetc_fix
 
 %build
-%configure2_5x --with-tcl=%{tcl_sitearch} --with-tk=%{_libdir} --libdir=%{tcl_sitearch} --disable-threads
+%configure2_5x \
+	--with-tcl=%{tcl_sitearch} \
+	--with-tk=%{_libdir} \
+	--libdir=%{tcl_sitearch} \
+	--disable-threads
 %make
 
 %install
-%{__rm} -fr %{buildroot}
 make INSTALL_ROOT=%{buildroot} install
 
 # Fixing some permissions
@@ -69,34 +95,9 @@ find %{buildroot}/%{tcl_sitearch} -name "*.a" |xargs chmod 644
 find %{buildroot}/%{tcl_sitearch} -name "*.so" |xargs chmod 755
 
 # Make library links
-%{__mv} %{buildroot}/%{tcl_sitearch}/*.sh %{buildroot}/%{_libdir}
-for tcllibs in %{buildroot}/%{tcl_sitearch}/Img1.4/*tcl*.so; do
-btcllibs=`basename $tcllibs`
-%{__ln_s} tcl%{tcl_version}/Img1.4/$btcllibs %{buildroot}/%{_libdir}/$btcllibs
+mv %{buildroot}%{tcl_sitearch}/*.sh %{buildroot}%{_libdir}
+for tcllibs in %{buildroot}%{tcl_sitearch}/Img1.4/*tcl*.so; do
+    btcllibs=`basename $tcllibs`
+    ln -s tcl%{tcl_version}/Img1.4/$btcllibs %{buildroot}%{_libdir}/$btcllibs
 done
-
-%clean
-%{__rm} -fr %{buildroot}
-
-%if %mdkversion < 200900
-%post -p /sbin/ldconfig
-%endif
-
-%if %mdkversion < 200900
-%postun -p /sbin/ldconfig
-%endif
-
-%files
-%defattr(-,root,root,-)
-%doc README
-%{_libdir}/*.so
-%{tcl_sitearch}/Img1.4
-%exclude %{tcl_sitearch}/Img1.4/*.a
-
-%files devel
-%defattr(-,root,root,-)
-%doc README
-%{_includedir}/*
-%{_libdir}/*.sh
-%{tcl_sitearch}/Img1.4/*.a
 

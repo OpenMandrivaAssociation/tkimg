@@ -1,0 +1,186 @@
+diff -up tkimg1.4/libpng/configure.in.libpng tkimg1.4/libpng/configure.in
+--- tkimg1.4/libpng/configure.in.libpng	2010-07-07 07:08:08.000000000 -0400
++++ tkimg1.4/libpng/configure.in	2011-08-01 16:10:57.459585090 -0400
+@@ -65,14 +65,6 @@ IMG_SRCPATH(zlibtcl)
+ 
+ TEA_ADD_SOURCES([pngtcl.c pngtclStubInit.c])
+ 
+-TEA_ADD_SOURCES([
+-	../compat/libpng/png.c	../compat/libpng/pngerror.c	../compat/libpng/pngmem.c
+-	../compat/libpng/pngpread.c	../compat/libpng/pngread.c	../compat/libpng/pngrio.c
+-	../compat/libpng/pngrtran.c	../compat/libpng/pngrutil.c	../compat/libpng/pngset.c
+-	../compat/libpng/pngtrans.c	../compat/libpng/pngwio.c	../compat/libpng/pngwrite.c
+-	../compat/libpng/pngwtran.c	../compat/libpng/pngwutil.c	../compat/libpng/pngget.c
+-])
+-
+ TEA_ADD_HEADERS([pngtcl.h pngtclDecls.h])
+ TEA_ADD_INCLUDES([-I\"`\${CYGPATH} \${zlibtcl_SRC_PATH}`\"])
+ TEA_ADD_INCLUDES([-I\"`\${CYGPATH} \${zlibtcl_BUILD_PATH}`\"])
+diff -up tkimg1.4/libpng/configure.libpng tkimg1.4/libpng/configure
+--- tkimg1.4/libpng/configure.libpng	2010-07-13 11:44:38.000000000 -0400
++++ tkimg1.4/libpng/configure	2011-08-01 16:10:57.466585002 -0400
+@@ -5235,11 +5235,6 @@ fi
+ 
+ 
+     vars="
+-	../compat/libpng/png.c	../compat/libpng/pngerror.c	../compat/libpng/pngmem.c
+-	../compat/libpng/pngpread.c	../compat/libpng/pngread.c	../compat/libpng/pngrio.c
+-	../compat/libpng/pngrtran.c	../compat/libpng/pngrutil.c	../compat/libpng/pngset.c
+-	../compat/libpng/pngtrans.c	../compat/libpng/pngwio.c	../compat/libpng/pngwrite.c
+-	../compat/libpng/pngwtran.c	../compat/libpng/pngwutil.c	../compat/libpng/pngget.c
+ "
+     for i in $vars; do
+ 	case $i in
+@@ -6046,7 +6041,7 @@ $as_echo "$tcl_cv_cc_visibility_hidden" 
+     if test $tcl_cv_cc_visibility_hidden = yes; then :
+ 
+ 
+-$as_echo "#define MODULE_SCOPE extern __attribute__((__visibility__(\"hidden\")))" >>confdefs.h
++$as_echo "#define MODULE_SCOPE extern" >>confdefs.h
+ 
+ 
+ fi
+diff -up tkimg1.4/libpng/Makefile.in.libpng tkimg1.4/libpng/Makefile.in
+--- tkimg1.4/libpng/Makefile.in.libpng	2010-07-06 09:36:37.000000000 -0400
++++ tkimg1.4/libpng/Makefile.in	2011-08-01 16:10:57.466585002 -0400
+@@ -111,7 +111,7 @@ RANLIB		= @RANLIB@
+ RANLIB_STUB	= @RANLIB_STUB@
+ SHLIB_CFLAGS	= @SHLIB_CFLAGS@
+ SHLIB_LD	= @SHLIB_LD@
+-SHLIB_LD_LIBS	= @SHLIB_LD_LIBS@
++SHLIB_LD_LIBS	= @SHLIB_LD_LIBS@ `libpng-config --libs`
+ STLIB_LD	= @STLIB_LD@
+ TCL_DEFS	= @TCL_DEFS@
+ TCL_BIN_DIR	= @TCL_BIN_DIR@
+@@ -154,7 +154,7 @@ CONFIG_CLEAN_FILES = Makefile
+ CPPFLAGS	= @CPPFLAGS@
+ LIBS		= @PKG_LIBS@ @LIBS@
+ AR		= @AR@
+-CFLAGS		= @CFLAGS@ -DPNG_IMPEXP=MODULE_SCOPE -DPNG_EXTERN=MODULE_SCOPE
++CFLAGS		= @CFLAGS@ -DPNG_IMPEXP= -DPNG_EXTERN=MODULE_SCOPE `libpng-config --cflags`
+ COMPILE		= $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+ 
+ #========================================================================
+diff -up tkimg1.4/libpng/pngtclDecls.h.libpng tkimg1.4/libpng/pngtclDecls.h
+--- tkimg1.4/libpng/pngtclDecls.h.libpng	2010-08-28 08:57:50.000000000 -0400
++++ tkimg1.4/libpng/pngtclDecls.h	2011-08-01 16:26:45.653678748 -0400
+@@ -16,11 +16,11 @@
+ 
+ #include <tcl.h>
+ 
++
+ #ifdef PNG_IMPEXP
+ #   undef TCL_STORAGE_CLASS
+ #   define TCL_STORAGE_CLASS DLLEXPORT
+ #else
+-#   define PNG_IMPEXP extern
+ #   undef USE_PNGTCL_STUBS
+ #   define USE_PNGTCL_STUBS 1
+ #endif
+@@ -28,7 +28,7 @@
+ EXTERN int Pngtcl_Init(Tcl_Interp *interp);
+ EXTERN int Pngtcl_SafeInit(Tcl_Interp *interp);
+ 
+-#include "../compat/libpng/png.h"
++#include </usr/include/png.h>
+ 
+ /* !BEGIN!: Do not edit below this line. */
+ 
+@@ -53,10 +53,10 @@ PNG_IMPEXP png_structp	png_create_write_
+ 				png_voidp error_ptr, png_error_ptr error_fn,
+ 				png_error_ptr warn_fn);
+ /* 6 */
+-PNG_IMPEXP png_size_t	png_get_compression_buffer_size(png_structp png_ptr);
++PNG_IMPEXP png_uint_32	png_get_compression_buffer_size(png_structp png_ptr);
+ /* 7 */
+ PNG_IMPEXP void		png_set_compression_buffer_size(png_structp png_ptr,
+-				png_size_t size);
++				png_uint_32 size);
+ /* 8 */
+ PNG_IMPEXP int		png_reset_zstream(png_structp png_ptr);
+ /* 9 */
+@@ -158,11 +158,12 @@ PNG_IMPEXP void		png_set_background(png_
+ 				double background_gamma);
+ /* 44 */
+ PNG_IMPEXP void		png_set_strip_16(png_structp png_ptr);
+-/* 45 */
+-PNG_IMPEXP void		png_set_quantize(png_structp png_ptr,
++/* Slot 45 is reserved */
++/* PNG_IMPEXP void		png_set_quantize(png_structp png_ptr,
+ 				png_colorp palette, int num_palette,
+ 				int maximum_colors, png_uint_16p histogram,
+ 				int full_dither);
++*/
+ /* 46 */
+ PNG_IMPEXP void		png_set_gamma(png_structp png_ptr,
+ 				double screen_gamma,
+@@ -304,7 +305,7 @@ PNG_IMPEXP void		png_progressive_combine
+ 				png_bytep old_row, png_bytep new_row);
+ /* 94 */
+ PNG_IMPEXP png_voidp	png_malloc(png_structp png_ptr,
+-				png_alloc_size_t size);
++				png_uint_32 size);
+ /* 95 */
+ PNG_IMPEXP void		png_free(png_structp png_ptr, png_voidp ptr);
+ /* 96 */
+@@ -317,7 +318,7 @@ PNG_IMPEXP void		png_data_freer(png_stru
+ 				png_uint_32 mask);
+ /* 98 */
+ PNG_IMPEXP png_voidp	png_malloc_default(png_structp png_ptr,
+-				png_alloc_size_t size);
++				png_uint_32 size);
+ /* 99 */
+ PNG_IMPEXP void		png_free_default(png_structp png_ptr, png_voidp ptr);
+ /* Slot 100 is reserved */
+@@ -340,7 +341,7 @@ PNG_IMPEXP void		png_chunk_warning(png_s
+ PNG_IMPEXP png_uint_32	png_get_valid(png_structp png_ptr,
+ 				png_infop info_ptr, png_uint_32 flag);
+ /* 108 */
+-PNG_IMPEXP png_size_t	png_get_rowbytes(png_structp png_ptr,
++PNG_IMPEXP png_uint_32	png_get_rowbytes(png_structp png_ptr,
+ 				png_infop info_ptr);
+ /* 109 */
+ PNG_IMPEXP png_bytepp	png_get_rows(png_structp png_ptr, png_infop info_ptr);
+@@ -1058,7 +1059,8 @@ typedef struct PngtclStubs {
+     void (*png_set_invert_monoPtr) (png_structp png_ptr); /* 42 */
+     void (*png_set_backgroundPtr) (png_structp png_ptr, png_color_16p background_color, int background_gamma_code, int need_expand, double background_gamma); /* 43 */
+     void (*png_set_strip_16Ptr) (png_structp png_ptr); /* 44 */
+-    void (*png_set_quantizePtr) (png_structp png_ptr, png_colorp palette, int num_palette, int maximum_colors, png_uint_16p histogram, int full_dither); /* 45 */
++    /* void (*png_set_quantizePtr) (png_structp png_ptr, png_colorp palette, int num_palette, int maximum_colors, png_uint_16p histogram, int full_dither); */
++    void (*reserved45)(void);
+     void (*png_set_gammaPtr) (png_structp png_ptr, double screen_gamma, double default_file_gamma); /* 46 */
+     void (*png_permit_empty_pltePtr) (png_structp png_ptr, int empty_plte_permitted); /* 47 */
+     void (*png_set_flushPtr) (png_structp png_ptr, int nrows); /* 48 */
+@@ -1107,7 +1109,7 @@ typedef struct PngtclStubs {
+     png_voidp (*png_get_progressive_ptrPtr) (png_structp png_ptr); /* 91 */
+     void (*png_process_dataPtr) (png_structp png_ptr, png_infop info_ptr, png_bytep buffer, png_size_t buffer_size); /* 92 */
+     void (*png_progressive_combine_rowPtr) (png_structp png_ptr, png_bytep old_row, png_bytep new_row); /* 93 */
+-    png_voidp (*png_mallocPtr) (png_structp png_ptr, png_alloc_size_t size); /* 94 */
++    png_voidp (*png_mallocPtr) (png_structp png_ptr, png_uint_32 size); /* 94 */
+     void (*png_freePtr) (png_structp png_ptr, png_voidp ptr); /* 95 */
+     void (*png_free_dataPtr) (png_structp png_ptr, png_infop info_ptr, png_uint_32 free_me, int num); /* 96 */
+     void (*png_data_freerPtr) (png_structp png_ptr, png_infop info_ptr, int freer, png_uint_32 mask); /* 97 */
+@@ -1435,8 +1437,9 @@ PNG_IMPEXP const PngtclStubs *pngtclStub
+ 	(pngtclStubsPtr->png_set_backgroundPtr) /* 43 */
+ #define png_set_strip_16 \
+ 	(pngtclStubsPtr->png_set_strip_16Ptr) /* 44 */
+-#define png_set_quantize \
+-	(pngtclStubsPtr->png_set_quantizePtr) /* 45 */
++/* Slot 45 is reserved */
++/* #define png_set_quantize \
++	(pngtclStubsPtr->png_set_quantizePtr) */
+ #define png_set_gamma \
+ 	(pngtclStubsPtr->png_set_gammaPtr) /* 46 */
+ #define png_permit_empty_plte \
+diff -up tkimg1.4/libpng/pngtclStubInit.c.libpng tkimg1.4/libpng/pngtclStubInit.c
+--- tkimg1.4/libpng/pngtclStubInit.c.libpng	2010-07-08 04:26:15.000000000 -0400
++++ tkimg1.4/libpng/pngtclStubInit.c	2011-08-01 16:10:57.473584914 -0400
+@@ -163,7 +163,7 @@ const PngtclStubs pngtclStubs = {
+ #if !defined(PNG_READ_DITHER_SUPPORTED)
+     0, /* 45 */
+ #else  /* !PNG_READ_DITHER_SUPPORTED */
+-    png_set_quantize, /* 45 */
++    0, /* 45 */
+ #endif /* !PNG_READ_DITHER_SUPPORTED */
+ #if !defined(PNG_READ_GAMMA_SUPPORTED) || !defined(PNG_FLOATING_POINT_SUPPORTED)
+     0, /* 46 */
