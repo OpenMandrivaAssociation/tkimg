@@ -4,7 +4,7 @@ Version:	1.4
 Release:	1
 License:	BSD
 Group:		System/Libraries
-Url:		http://sourceforge.net/projects/tkimg
+Url:		https://sourceforge.net/projects/tkimg
 Source0:	%{name}%{version}.tar.bz2
 Patch0:		tkimg-zlib.patch
 Patch1:		tkimg-jpg.patch
