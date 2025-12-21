@@ -17,6 +17,11 @@ Patch5:		tkimg-libtiff4.patch
 # tcl/tk bits. The simple fix is to use the abstraction function "gzgetc_"
 # which avoids the problem. See: https://bugzilla.redhat.com/show_bug.cgi?id=844462
 Patch6:		tkimg-zlib127-gzgetc_fix.patch
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	tcl-tcllib
 BuildRequires:	jpeg-devel
 BuildRequires:	tcl-devel
